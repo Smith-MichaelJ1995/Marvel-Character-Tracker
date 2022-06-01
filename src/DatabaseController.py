@@ -12,8 +12,8 @@ class DatabaseController:
                 host="127.0.0.1",
                 user=os.environ.get('SQL_USER'),
                 password=os.environ.get('SQL_PASSWORD'),  
-                database="intel",               
-                port="3306",
+                database=os.environ.get('SQL_DATABASE'),               
+                port=os.environ.get('SQL_PORT'),
             )
 
         except mysql.connector.Error as err:
@@ -24,6 +24,52 @@ class DatabaseController:
             else:
                 print(err)
             exit()
+
+    # perform operation on class instantiation
+    def populate(self):
+
+        # create temporary records placeholder
+        records = {}
+
+        # fetch all tables in "intel" database
+        self.myCursor.execute("show TABLES;")
+        tables = self.myCursor.fetchall()
+
+        # traverse through all tables
+        for table in tables:
+
+            # extract column name
+            tableName = table[0]
+            searchResults = []
+
+            # extract all records from table in question
+            self.myCursor.execute("SELECT * from {}".format(tableName))
+            rows = self.myCursor.fetchall()
+
+            # fetch all records from all rows
+            for index, row in enumerate(rows):
+
+                # extract key/value fields
+                heroNumber = row[0]
+                heroName = row[1]
+                heroThumbnail = row[2]
+                heroDescription = row[3]
+
+                # append search results for future processing
+                searchResults.append({
+                    "id": heroNumber,
+                    "name": heroName,
+                    "img": heroThumbnail,
+                    "description": heroDescription 
+                })
+            
+            
+            # append item to records container
+            records[tableName] = searchResults
+            
+        return records
+        
+        
 
     # instantiate expected variables
     def __init__(self):
@@ -37,13 +83,19 @@ class DatabaseController:
         # use selected database
         self.myCursor.execute("USE intel;")
 
-        #print("HELLO FROM DATABASE!")
-        #print(self.myDB)
-        pass
+        # populate records from database
+        self.records = self.populate()
+
+        print(self.records)
 
     # insert records into database
     def insert_records(self, records):
         pass
+
+    # return all tables within intel database
+    #def fetch_table_names(self):
+        
+    
 
     # create table instance within views database
     def create_table(self, tableName, tableColumns):

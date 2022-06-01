@@ -25,12 +25,13 @@ class MarvelController():
         self.KEY = os.environ.get('MARVEL_API_KEY')
         self.SECRET = os.environ.get("MARVEL_API_SECRET")
         self.config = self.fetch_config()
-        self.base_url = "https://gateway.marvel.com:443"
+        self.base_url = "https://gateway.marvel.com:443/v1/public/"
         self.credentials_stamp = "&ts={}&apikey={}&hash={}".format(
             self.config['timestamp'],
             self.config['key'], 
             self.config['hash']
         )
+        self.characters = None
 
     # # return character profile based on name
     def fetch_content_from_api(self, queryURI):
@@ -52,6 +53,10 @@ class MarvelController():
 
             # return empty object to user
             return {}
+    
+    # given characterName, query information from API
+    def fetch_target_character_from_api(self, characterName):
+        return self.fetch_content_from_api(queryURI="characters?name={}".format(characterName))
     
 
 # # given character name & payload, write contents to filesystem
