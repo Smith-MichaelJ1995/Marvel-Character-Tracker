@@ -72,7 +72,7 @@ class DatabaseController:
         return records
 
     # given string, remove bad sql characters
-    def remove_bad_characters(inpt):
+    def remove_bad_characters(self, inpt):
         for badChar in self.badChars:
             inpt = inpt.replace(badChar, "")
         return inpt
@@ -112,24 +112,28 @@ class DatabaseController:
     # insert records into databases specified table
     def insert_records(self, tableName, tableRecords):
 
-        # remove bad chara
+        # filter characters to contain only relevant fields
+        print("WE MADE IT INTO DB.INSERT_RECORDS! = {}".format(tableRecords))
+        exit()    
 
+        # insert into self.records
+
+        
+        # create table
+        cmd = """CREATE TABLE %s (id INTEGER, name VARCHAR(255), comics VARCHAR(1000), image VARCHAR(255), description VARCHAR(1000))"""
+        self.myCursor.execute(cmd, tableName)
+
+
+        # insert records into table
         # PROTECT TABLE NAME FROM INJECTION
         sqlStatement = "INSERT INTO {} (id, name, image, description) VALUES (%s, %s, %s, %s)".format(tableName)
-
-        # use selected database
         self.myCursor.executemany(sqlStatement, tableRecords)
 
         pass
         
     
-
-    # create table instance within views database
-    def create_table(self, tableName, tableColumns):
     
         # generate query string
         # cmd = """CREATE TABLE customers (name VARCHAR(255), address VARCHAR(255))"""
-        cmd = """CREATE TABLE characters (id INTEGER, name VARCHAR(255), comics VARCHAR(1000), image VARCHAR(255), description VARCHAR(1000))"""
-        
-        # invoke SQL command
-        self.myCursor.execute(cmd)
+        cmd = """CREATE TABLE %s (id INTEGER, name VARCHAR(255), comics VARCHAR(1000), image VARCHAR(255), description VARCHAR(1000))"""
+        self.myCursor.execute(cmd, tableName)

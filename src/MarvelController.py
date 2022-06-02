@@ -3,6 +3,9 @@ import os
 import hashlib
 import requests
 
+# integrate Database class controller
+from DatabaseController import DatabaseController
+
 class MarvelController():
 
     # generate API auth credentials
@@ -33,8 +36,7 @@ class MarvelController():
             self.config['hash']
         )
         self.characters = None
-
-        print(self.credentials_stamp)
+        self.dbController = DatabaseController()
 
     # # return character profile based on name
     def fetch_content_from_api(self, queryURI):
@@ -70,16 +72,24 @@ class MarvelController():
             # return empty object to user
             return {}
     
+    # FIX RECORDS SO THEY RETURN BACK NEATLY FORMATTED DATA READY FOR DB CONTROLLER
     # given characterName, query information from API
     def fetch_target_character_from_api(self, characterName):
         return self.fetch_content_from_api(queryURI="characters?name={}&".format(characterName))
 
     # given characterName, query information from API
-    def fetch_characters_from_target_comic(self, comicName):
-        return self.fetch_content_from_api(queryURI="comics/{}/characters?".format(comicName))
+    def fetch_characters_from_target_comic(self, comicId):
+        return self.fetch_content_from_api(queryURI="comics/{}/characters?".format(comicId))
 
-    def fetch_comics_from_character_record(self, character):
-        return character["data"]["results"][0][0]
+    # given comics list, return back all strings 
+    def fetch_comics_from_character_record(self, comics):
+        comicNames = ""
+        for comic in comics:
+            comicName = self.dbController.remove_bad_characters(
+                inpt=comic['name']
+            )
+            comicNames += "{}, ".format(comicName)
+        return comicNames
     
 # # given provided comic information, return/fetch all characters within comic
 # def fetch_all_characters_from_comic(comicId, config):

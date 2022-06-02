@@ -7,7 +7,7 @@ import os
 from flask import Flask, request, jsonify, render_template, redirect
 from flask_classful import FlaskView, route
 
-# integrate MongoDB & MarvelController class controller
+# integrate Database & MarvelController class controller
 from DatabaseController import DatabaseController
 from MarvelController import MarvelController
 
@@ -232,29 +232,60 @@ class PrimaryController(FlaskView):
             # QUERY MARVEL API, FETCH SPECIFIED CHARACTER RECORD, THEN 
             characterRecord = mvController.fetch_target_character_from_api(characterName=characterName)
 
-            #print("characterRecord: {}".format(characterRecord))
-            #exit()
-
             # THIS CHECK ENSURES GRACEFUL HANDLING OF NO RESULTS OR FINDING UNINTENDED CHARACTERS THRU API
             if characterRecord['data']['results'] == [] or characterRecord["data"]["results"][0]['name'].lower() != characterName:
                 return redirect("/", code=302) 
             
             # FETCH ALL CHARACTER INTERACTED WITH IN OTHER COMICS
-            #characterRecord = characterRecord["data"]["results"][0]
+            characterRecord = characterRecord["data"]["results"][0]
+
+            # append primary characterRecord onto characterComics list
+            characterComics.append(characterRecord)
             
             # traverse through & record list of comics from record
+            # GRAB CHARACTERS FROM ALL RELATED COMICS
             for comic in characterRecord["comics"]["items"]:
+
+                # extract comicId from comic['resourceURI']
+                comicId = comic['resourceURI'].split("/")[-1]
+
                 # fetch all characters from target comic
-                results = mvController.fetch_characters_from_target_comic(comic['name'])
+                charactersFromTargetComic = mvController.fetch_characters_from_target_comic(comicId=comicId)
 
-                print(results)
-                exit()
-                # characterComics.append(
-                #     mvController.fetch_characters_from_target_comic(comic['name'])
-                # )
-            
+                # save character object for later processing
+                characterComics.append(
+                    charactersFromTargetComic
+                )
 
-            # ADD RECORD INTO RECORDS CONTROLLER  
+                break
+
+            # filtering data record into desired format for database controller
+            # GRAB INSERTABLE RECORD FOR EACH characterComic
+            relevantFieldsRecordsContainer = []
+            for characterComic in characterComics:
+
+                print("characterComic = {}".format(json.dumps(characterComic, indent=4)))
+
+                # extract fields
+                heroNumber = int(characterComic['id'])
+                heroName = dbController.remove_bad_characters(inpt=characterComic['name'])
+                heroComics = mvController.fetch_comics_from_character_record(characterComic['comics']['items'])
+                heroThumbnail = characterComic['thumbnail']['path'] + characterComic['thumbnail']['extension']
+                heroDescription = dbController.remove_bad_characters(inpt=characterComic['description'])
+
+                # stage record
+                relevantFieldsRecordsContainer.append({
+                    "id": heroNumber,
+                    "name": heroName,
+                    "comics": heroComics,
+                    "img": heroThumbnail,
+                    "description": heroDescription 
+                })
+
+            # ADD RECORD INTO DATABASE CONTROLLER  
+            dbController.insert_records(characterName, relevantFieldsRecordsContainer)
+
+
             # CREATE TABLE IN DATABASE
             # INSERT ALL DISCOVERED RECORDS INTO DATABASE
             # RE-ROUTE TO HOME PAGE   
