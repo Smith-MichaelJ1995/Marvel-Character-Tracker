@@ -117,6 +117,9 @@ class MarvelController():
 
                 break
 
+            # remove duplicate characters found from different comics
+            finalCharactersResultsList = [dict(t) for t in {tuple(d.items()) for d in finalCharactersResultsList}]
+
 
             # provide neatened characters list to caller
             return finalCharactersResultsList
@@ -126,9 +129,6 @@ class MarvelController():
     def fetch_characters_from_target_comic(self, comicId):
         # extract characters from provided comic
         rawCharactersFromTargetComic = self.fetch_content_from_api(queryURI="comics/{}/characters?".format(comicId))['data']['results']
-
-        #print("rawCharactersFromTargetComic = {}".format(rawCharactersFromTargetComic))
-        #exit()
 
         # create characters list placeholder
         charactersCleansed = []
