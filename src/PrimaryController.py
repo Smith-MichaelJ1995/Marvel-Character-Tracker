@@ -49,7 +49,7 @@ class PrimaryController(FlaskView):
                         </form>
                     </nav>
 
-                    <div class="container pt-3">
+                    <div class="container-fluid pt-3">
                         <div class="row pt-3">
                             <div class="col-lg-12">
                                 <INSERT-DYNAMIC-CONTENT-HERE>
@@ -127,7 +127,7 @@ class PrimaryController(FlaskView):
             # records.remove(primaryCharacterRecord)
 
             # display primary character information
-            boilerplateContent += """
+            dynamicContent += """
                 <div class="jumbotron">
                     <h1 style='text-align: center;'>Primary Character Name: <i>{}</i></h1>
                     <h1 style='text-align: center;'>Primary Character ID: <i>{}</i></h1>
@@ -142,9 +142,110 @@ class PrimaryController(FlaskView):
                 </div>
             """.format(primaryCharacterRecord["name"],primaryCharacterRecord["id"], primaryCharacterRecord["img"], primaryCharacterRecord["description"])
 
-        else:
-            boilerplateContent += "<h1 style='text-align: center;'>No Information Found...</h1>"
 
+#             <div class="container mt-3">
+#     <h2>Filterable Table</h2>
+#     <p>Type something in the input field to search the table for first names, last names or emails:</p>  
+#     <input class="form-control" id="myInput" type="text" placeholder="Search..">
+#     <br>
+#     <table class="table table-bordered">
+#       <thead>
+#         <tr>
+#           <th>Firstname</th>
+#           <th>Lastname</th>
+#           <th>Email</th>
+#         </tr>
+#       </thead>
+#       <tbody id="myTable">
+#         <tr>
+#           <td>John</td>
+#           <td>Doe</td>
+#           <td>john@example.com</td>
+#         </tr>
+#         <tr>
+#           <td>Mary</td>
+#           <td>Moe</td>
+#           <td>mary@mail.com</td>
+#         </tr>
+#         <tr>
+#           <td>July</td>
+#           <td>Dooley</td>
+#           <td>july@greatstuff.com</td>
+#         </tr>
+#         <tr>
+#           <td>Anja</td>
+#           <td>Ravendale</td>
+#           <td>a_r@test.com</td>
+#         </tr>
+#       </tbody>
+#     </table>
+    
+#     <p>Note that we start the search in tbody, to prevent filtering the table headers.</p>
+#   </div>
+
+#   <script>
+#   $(document).ready(function(){
+#     $("#myInput").on("keyup", function() {
+#       var value = $(this).val().toLowerCase();
+#       $("#myTable tr").filter(function() {
+#         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+#       });
+#     });
+#   });
+#   </script>
+
+            # begin to create template for filterable table
+            dynamicContent += """
+            <div class="container-fluid mt-3">
+                <h2>Filterable Table</h2>
+                    <p>Type something in the input field to search the character for name, id, comics, description:</p>
+                    <input class="form-control" id="myInput" type="text" placeholder="Search..">
+                    <br>
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Image</th>
+                            <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myTable">"""
+
+            # traverse through all records, generate HTML
+            # show characters from comics
+            for record in records:
+
+                # append table row and all columns
+                dynamicContent += """
+                <tr>
+                    <td>{}</td>
+                    <td>{}</td>
+                    <td><img src={}></img></td>
+                    <td>{}</td>
+                </tr>
+                """.format(record['id'], record['name'], record['img'], record['description'])
+                        
+                        
+            # append dynamic table footer contents
+            dynamicContent += """
+                    <script>
+                        $(document).ready(function(){
+                            $("#myInput").on("keyup", function() {
+                            var value = $(this).val().toLowerCase();
+                            $("#myTable tr").filter(function() {
+                                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                            });
+                            });
+                        });
+                    </script>
+                </tbody>
+            </table>
+            """
+
+        else:
+            dynamicContent += "<h1 style='text-align: center;'>No Information Found...</h1>"
 
         # add footer content to webpage
         boilerplateContent = boilerplateContent.replace("<INSERT-DYNAMIC-CONTENT-HERE>", dynamicContent)

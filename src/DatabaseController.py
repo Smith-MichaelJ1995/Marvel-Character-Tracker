@@ -79,6 +79,14 @@ class DatabaseController:
     def return_table_names(self):
         return self.records.keys()
 
+    # return table records to viewer
+    def return_records_from_table(self, tableName):
+        if tableName in self.records.keys():
+            return self.records[tableName]
+        else:
+            return []
+        
+
     # instantiate expected variables
     def __init__(self):
 
