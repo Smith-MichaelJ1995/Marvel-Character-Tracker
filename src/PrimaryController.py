@@ -4,7 +4,7 @@ import json
 import os
 
 # integrate Flask API Class Libraries
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect
 from flask_classful import FlaskView, route
 
 # integrate MongoDB & MarvelController class controller
@@ -18,19 +18,14 @@ app = Flask(__name__)
 mvController = MarvelController()
 dbController = DatabaseController()
 
-
-###
-#
-#
-###
-
 # Controller Class To Integrate with UI, MarvelAPI Backend, Local Database.
 class PrimaryController(FlaskView):
 
     # instantiate expected variables
     def __init__(self):
 
-        self.htmlWebpageInformation = """
+        # universal header of all app pages
+        self.defaultHTMLWebpage = """
             <!DOCTYPE html>
                 <html lang="en">
                 <head>
@@ -45,23 +40,61 @@ class PrimaryController(FlaskView):
                 <body>
 
                     <nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-between">
-                        <form class="form-inline" action="/action_page.php">
+                        <form class="form-inline" action="/populateRecord" method="post">
                         <a class="navbar-brand" href="/">
-                            <img src="https://cdn.iconscout.com/icon/free/png-256/marvel-282124.png" alt="Marvel" style="width:100px; height:60px">
+                            <img src="https://cdn.iconscout.com/icon/free/png-256/marvel-282124.png" alt="Marvel" style="width:100px; height:60px; padding: 0px">
                         </a>
                         <input class="form-control mr-sm-2" type="text" placeholder="Search">
                         <button class="btn btn-success" type="submit">Search</button>
                         </form>
                     </nav>
+
+                    <div class="container pt-3">
+                        <div class="row pt-3">
+                            <div class="col-lg-12">
+                                <INSERT-DYNAMIC-CONTENT-HERE>
+                            </div>
+                        </div>
+                    </div>
                 </body>
-                </html>
+            </html>
         """
-        pass
+
 
     # ROUTE #0: DISPLAY ALL TABLES (CHARACTERS) IN DATABASE AS CLICKABLE LINKS
     def index(self):
 
-        return self.htmlWebpageInformation
+        # extract table names from data cache
+        table_names = dbController.return_table_names()
+
+        # instantiate webpage content
+        boilerplageContent = self.defaultHTMLWebpage
+
+        # create placeholder for inserted HTML content
+        dynamicContent = ""
+
+        # programmatically generate tables for eac
+        if len(table_names) == 0:
+            dynamicContent += "<h1 style='text-align: center;'>No Characters Found:</h1>"
+        else:
+            dynamicContent += "<h1 style='text-align: center;'>Select Character(s) From List Below:</h1>"
+            # dynamically create cards for each table
+            for table in table_names:
+                dynamicContent +="""
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>{}</h2>
+                        </div> 
+                        <div class="card-body">
+                            <a href="/view/{}">View {}'s Information & Relevant Characters From Comics</a>
+                        </div> 
+                    </div>
+                """.format(table.capitalize(), table, table.capitalize())
+
+        # add footer content to webpage
+        boilerplageContent = boilerplageContent.replace("<INSERT-DYNAMIC-CONTENT-HERE>", dynamicContent)
+
+        return boilerplageContent
 
 
         # # determine which tables we have already
@@ -90,7 +123,9 @@ class PrimaryController(FlaskView):
     # ROUTE #1: DISPLAY ALL DATA RECORDS FROM SPECIFIED TABLE
     @route('/view/<name>', methods=['GET'])
     def getTable(self, name):
-        return "<h1>This is the view's page: {}</h1>".format(name)
+        #return "<h1>This is the view's page: {}</h1>".format(name)
+        print("Performing redirect!")
+        return redirect("http://localhost:5050/", code=302)
 
     # ROUTE #2: GIVEN NEW CHARACTER, PERFORM THE FOLLOWING APPLICATION LOGIC:
     # IF TABLE ALREADY EXISTS (CHECK AGAINST OUR RECORDS CONTROLLER), IF SO, RETURN ALERT MESSAGE AND DO NOTHING
@@ -102,6 +137,8 @@ class PrimaryController(FlaskView):
     # RE-ROUTE TO HOME PAGE             
     @route('/populateRecord', methods=['POST'])
     def createView(self):
+        print("Hello World!")
+        return redirect("http://localhost:5050/", code=302)
         pass
 
     # create new view instance

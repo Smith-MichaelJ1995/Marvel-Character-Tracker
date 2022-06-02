@@ -68,8 +68,16 @@ class DatabaseController:
             records[tableName] = searchResults
             
         return records
+
+    # given string, remove bad sql characters
+    def remove_bad_characters(inpt):
+        for badChar in self.badChars:
+            inpt = inpt.replace(badChar, "")
+        return inpt
         
-        
+    # return all table names within intel database
+    def return_table_names(self):
+        return self.records.keys()
 
     # instantiate expected variables
     def __init__(self):
@@ -80,6 +88,9 @@ class DatabaseController:
         # generate cursor for inline command invocation
         self.myCursor = self.myDB.cursor()
 
+        # declare list of known bad characters for safety
+        self.badChars = ['&','<','>','/','\\','"',"'",'?','+']
+
         # use selected database
         self.myCursor.execute("USE intel;")
 
@@ -88,12 +99,18 @@ class DatabaseController:
 
         print(self.records)
 
-    # insert records into database
-    def insert_records(self, records):
-        pass
+    # insert records into databases specified table
+    def insert_records(self, tableName, tableRecords):
 
-    # return all tables within intel database
-    #def fetch_table_names(self):
+        # remove bad chara
+
+        # PROTECT TABLE NAME FROM INJECTION
+        sqlStatement = "INSERT INTO {} (id, name, image, description) VALUES (%s, %s, %s, %s)".format(tableName)
+
+        # use selected database
+        self.myCursor.executemany(sqlStatement, tableRecords)
+
+        pass
         
     
 
