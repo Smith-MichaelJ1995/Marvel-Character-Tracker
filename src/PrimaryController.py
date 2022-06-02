@@ -234,15 +234,11 @@ class PrimaryController(FlaskView):
 
             # return back redirect if no records found
             if len(finalCharactersResultsList) == 0:
-                return redirect("/", code=302) 
-
-            print(finalCharactersResultsList)
-            exit()
+                self.defaultHTMLWebpage = self.defaultHTMLWebpage.replace("<INSERT-DYNAMIC-CONTENT-HERE>", "<h1>No Records Found For Character: {}</h1>".format(characterName))
+                return self.defaultHTMLWebpage
 
             # ADD RECORD INTO DATABASE CONTROLLER  
-            dbController.insert_records(characterName, relevantFieldsRecordsContainer)
-
-
+            dbController.insert_records(tableName=characterName, tableRecords=finalCharactersResultsList)
             # CREATE TABLE IN DATABASE
             # INSERT ALL DISCOVERED RECORDS INTO DATABASE
             # RE-ROUTE TO HOME PAGE   

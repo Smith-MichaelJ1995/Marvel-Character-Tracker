@@ -94,7 +94,7 @@ class MarvelController():
                     "id":rawCharacterRecord['id'],
                     "name": self.dbController.remove_bad_characters(rawCharacterRecord['name']),
                     "comics": self.fetch_comics_from_character_record(rawCharacterRecord['comics']['items']),
-                    "img": rawCharacterRecord['thumbnail']['path'] + rawCharacterRecord['thumbnail']['extension'],
+                    "img": rawCharacterRecord['thumbnail']['path'] + "." + rawCharacterRecord['thumbnail']['extension'],
                     "description": self.dbController.remove_bad_characters(
                         inpt=rawCharacterRecord['description']
                     )   
@@ -141,7 +141,7 @@ class MarvelController():
                 "id":character['id'],
                 "name": self.dbController.remove_bad_characters(character['name']),
                 "comics": self.fetch_comics_from_character_record(character['comics']['items']),
-                "img": character['thumbnail']['path'] + character['thumbnail']['extension'],
+                "img": character['thumbnail']['path'] + "." + character['thumbnail']['extension'],
                 "description": self.dbController.remove_bad_characters(
                     inpt=character['description']
                 )

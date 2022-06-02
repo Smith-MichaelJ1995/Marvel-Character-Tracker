@@ -1,6 +1,7 @@
 import mysql.connector
 from mysql.connector import errorcode
 import os
+import json
 
 # instantiate database controller
 class DatabaseController:
@@ -110,30 +111,46 @@ class DatabaseController:
         print(self.records)
 
     # insert records into databases specified table
-    def insert_records(self, tableName, tableRecords):
+    def insert_records(self, tableName, tableRecords):  
 
-        # filter characters to contain only relevant fields
-        print("WE MADE IT INTO DB.INSERT_RECORDS! = {}".format(tableRecords))
-        exit()    
+        # given list of dictionary records, generate list of tuples ready to insert
+        def generate_tuple_of_data(tableRecords): 
+            dbDataTuple=[]
+            for record in tableRecords:
+                dbDataTuple.append(
+                    (
+                        record['id'],
+                        record['name'],
+                        record['comics'],
+                        record['img'],
+                        record['description']
+                    )
+                )
+            return dbDataTuple
+            
 
         # insert into self.records
-
+        self.records[tableName] = tableRecords
         
         # create table
-        cmd = """CREATE TABLE %s (id INTEGER, name VARCHAR(255), comics VARCHAR(1000), image VARCHAR(255), description VARCHAR(1000))"""
-        self.myCursor.execute(cmd, tableName)
+        cmd = """CREATE TABLE {} (id INTEGER, name VARCHAR(255), comics VARCHAR(1000), image VARCHAR(255), description VARCHAR(1000))""".format(tableName)
+        self.myCursor.execute(cmd)
 
 
         # insert records into table
         # PROTECT TABLE NAME FROM INJECTION
-        sqlStatement = "INSERT INTO {} (id, name, image, description) VALUES (%s, %s, %s, %s)".format(tableName)
-        self.myCursor.executemany(sqlStatement, tableRecords)
-
-        pass
+        sqlStatement = """INSERT INTO {} (id, name, comics, image, description) """.format(tableName)
+        sqlStatement += """VALUES(%s, %s, %s, %s, %s);"""
+        tableRecords = generate_tuple_of_data(tableRecords)
+        # filter characters to contain only relevant fields
+        # cover
+        print("WE MADE = {}".format(json.dumps(tableRecords, indent=4)))
         
+        # invoke statement, add records.
+        self.myCursor.executemany(sqlStatement, tableRecords)        
     
     
         # generate query string
         # cmd = """CREATE TABLE customers (name VARCHAR(255), address VARCHAR(255))"""
-        cmd = """CREATE TABLE %s (id INTEGER, name VARCHAR(255), comics VARCHAR(1000), image VARCHAR(255), description VARCHAR(1000))"""
-        self.myCursor.execute(cmd, tableName)
+        # cmd = """CREATE TABLE %s (id INTEGER, name VARCHAR(255), comics VARCHAR(1000), image VARCHAR(255), description VARCHAR(1000))"""
+        # self.myCursor.execute(cmd, tableName)
