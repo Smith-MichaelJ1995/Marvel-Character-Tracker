@@ -115,8 +115,6 @@ class MarvelController():
                     charactersFromTargetComic
                 )
 
-                break
-
             # remove duplicate characters found from different comics
             finalCharactersResultsList = [dict(t) for t in {tuple(d.items()) for d in finalCharactersResultsList}]
 
