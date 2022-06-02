@@ -53,7 +53,7 @@ class MarvelController():
             # DOESNT WORK
             #url = "https://gateway.marvel.com:443/v1/public/characters?name='Morbius'&ts=1654164802&apikey=2a346d86972cc65d7982367dae7758af&hash=c1eb37eddc89b622161a8aa368d12057"
 
-            print("ATTEMPTING: {}".format(url))
+            #print("ATTEMPTING: {}".format(url))
 
             # generate response body
             res = requests.get(url).json()
@@ -75,13 +75,82 @@ class MarvelController():
     # FIX RECORDS SO THEY RETURN BACK NEATLY FORMATTED DATA READY FOR DB CONTROLLER
     # given characterName, query information from API
     def fetch_target_character_from_api(self, characterName):
-        return self.fetch_content_from_api(queryURI="characters?name={}&".format(characterName))
+
+        # query API for character record
+        rawCharacterRecord = self.fetch_content_from_api(queryURI="characters?name={}&".format(characterName))['data']['results']
+
+        # determine if null record
+        if len(rawCharacterRecord) == 0:
+            return []
+        else:
+
+            # extract raw character record for caller
+            rawCharacterRecord = rawCharacterRecord[0]
+
+            # create placeholder for characters from other comics
+            # instantiating list with target character
+            finalCharactersResultsList = [
+                {
+                    "id":rawCharacterRecord['id'],
+                    "name": self.dbController.remove_bad_characters(rawCharacterRecord['name']),
+                    "comics": self.fetch_comics_from_character_record(rawCharacterRecord['comics']['items']),
+                    "img": rawCharacterRecord['thumbnail']['path'] + rawCharacterRecord['thumbnail']['extension'],
+                    "description": self.dbController.remove_bad_characters(
+                        inpt=rawCharacterRecord['description']
+                    )   
+                }
+            ]
+
+
+            # GRAB CHARACTERS FROM ALL RELATED COMICS
+            for comic in rawCharacterRecord["comics"]["items"]:
+
+                # extract comicId from comic['resourceURI']
+                comicId = comic['resourceURI'].split("/")[-1]
+
+                # fetch all characters from target comic
+                charactersFromTargetComic = self.fetch_characters_from_target_comic(comicId=comicId)
+
+                # save character object for later processing
+                finalCharactersResultsList.extend(
+                    charactersFromTargetComic
+                )
+
+                break
+
+
+            # provide neatened characters list to caller
+            return finalCharactersResultsList
+
 
     # given characterName, query information from API
     def fetch_characters_from_target_comic(self, comicId):
-        return self.fetch_content_from_api(queryURI="comics/{}/characters?".format(comicId))
+        # extract characters from provided comic
+        rawCharactersFromTargetComic = self.fetch_content_from_api(queryURI="comics/{}/characters?".format(comicId))['data']['results']
 
-    # given comics list, return back all strings 
+        #print("rawCharactersFromTargetComic = {}".format(rawCharactersFromTargetComic))
+        #exit()
+
+        # create characters list placeholder
+        charactersCleansed = []
+
+        # traverse through all characters
+        for character in rawCharactersFromTargetComic:
+
+            charactersCleansed.append({
+                "id":character['id'],
+                "name": self.dbController.remove_bad_characters(character['name']),
+                "comics": self.fetch_comics_from_character_record(character['comics']['items']),
+                "img": character['thumbnail']['path'] + character['thumbnail']['extension'],
+                "description": self.dbController.remove_bad_characters(
+                    inpt=character['description']
+                )
+            })
+
+        return charactersCleansed
+
+
+    # given comics list, return back all strings, make sure they're void of bad characters
     def fetch_comics_from_character_record(self, comics):
         comicNames = ""
         for comic in comics:
