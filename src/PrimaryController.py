@@ -29,7 +29,7 @@ class PrimaryController(FlaskView):
             <!DOCTYPE html>
                 <html lang="en">
                 <head>
-                <title>Bootstrap Example</title>
+                <title>Impossible Travel Alert Monitor</title>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
@@ -44,7 +44,7 @@ class PrimaryController(FlaskView):
                         <a class="navbar-brand" href="/">
                             <img src="https://cdn.iconscout.com/icon/free/png-256/marvel-282124.png" alt="Marvel" style="width:100px; height:60px; padding: 0px">
                         </a>
-                        <input class="form-control mr-sm-2" type="text" placeholder="Query Additional Characters Here">
+                        <input class="form-control mr-sm-2" type="text" name="characterName" placeholder="Query Additional Characters Here">
                         <button class="btn btn-success" type="submit">Generate</button>
                         </form>
                     </nav>
@@ -253,8 +253,6 @@ class PrimaryController(FlaskView):
         boilerplateContent = boilerplateContent.replace("<INSERT-DYNAMIC-CONTENT-HERE>", dynamicContent)
 
         return boilerplateContent
-        #print("Performing redirect!")
-        #return redirect("http://localhost:5050/", code=302)
 
     # ROUTE #2: GIVEN NEW CHARACTER, PERFORM THE FOLLOWING APPLICATION LOGIC:
     # IF TABLE ALREADY EXISTS (CHECK AGAINST OUR RECORDS CONTROLLER), IF SO, RETURN ALERT MESSAGE AND DO NOTHING
@@ -266,9 +264,61 @@ class PrimaryController(FlaskView):
     # RE-ROUTE TO HOME PAGE             
     @route('/populateRecord', methods=['POST'])
     def createView(self):
-        print("Hello World!")
-        return redirect("http://localhost:5050/", code=302)
-        pass
+
+        character = mvController.fetch_target_character_from_api("spectrum")
+
+        # extract desired character/table from input form
+        characterName = "" if request.form['characterName'] == "" else request.form['characterName'].lower()
+        characterComics = []
+
+        # extract table names from data cache
+        table_names = dbController.return_table_names()
+
+        # if character name exists, then notify user and redirect to homepage
+        if characterName not in table_names: 
+
+            # extract character from record from API
+            # QUERY MARVEL API, FETCH SPECIFIED CHARACTER RECORD, THEN 
+            characterRecord = mvController.fetch_target_character_from_api(characterName=characterName)
+
+            print("characterRecord: {}".format(characterRecord))
+            exit()
+
+            # THIS CHECK ENSURES GRACEFUL HANDLING OF NO RESULTS OR FINDING UNINTENDED CHARACTERS THRU API
+            if characterRecord['data']['results'] == [] or characterRecord["data"]["results"][0]['name'].lower() != characterName:
+                return redirect("/", code=302) 
+            
+            # FETCH ALL CHARACTER INTERACTED WITH IN OTHER COMICS
+            #characterRecord = characterRecord["data"]["results"][0]
+            
+            # traverse through & record list of comics from record
+            for comic in characterRecord["comics"]["items"]:
+                # fetch all characters from target comic
+                results = mvController.fetch_characters_from_target_comic(comic['name'])
+
+                print(results)
+                exit()
+                # characterComics.append(
+                #     mvController.fetch_characters_from_target_comic(comic['name'])
+                # )
+            
+
+            # ADD RECORD INTO RECORDS CONTROLLER  
+            # CREATE TABLE IN DATABASE
+            # INSERT ALL DISCOVERED RECORDS INTO DATABASE
+            # RE-ROUTE TO HOME PAGE   
+
+
+
+        # character already exists, return back existing page
+        return redirect("/view/{}".format(characterName), code=302)
+
+
+
+
+        #print("Hello World!")
+        #return redirect("http://localhost:5050/", code=302)
+        #pass
 
     # create new view instance
     # @route('/generate', methods=['POST','GET'])
@@ -277,20 +327,7 @@ class PrimaryController(FlaskView):
     #     # extact contents from form fields
     #     # tableName = request.form['tableName']
     #     # tableColumns = request.form['tableColumns']
-    #     if request.method == 'POST':
-            
-    #         # read state file contents from filesystem
-    #         state = self.fetch_state_from_filesystem()
 
-    #         # determine which tables we have already
-    #         dbTableNames = dbController.fetch_table_names()
-
-    #         print("dbTableNames = {}".format(dbTableNames))
-
-    #         return "<h1>{}</h1>".format(dbTableNames)
-            
-    #     else:
-    #         return render_template("form.html")
 
 # instantiate PrimaryController FlaskAPI Instance
 PrimaryController.register(app, route_base='/')

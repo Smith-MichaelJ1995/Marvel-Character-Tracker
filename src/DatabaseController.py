@@ -126,15 +126,7 @@ class DatabaseController:
 
     # create table instance within views database
     def create_table(self, tableName, tableColumns):
-        # def extrapolate_columns():
-        #     columnString = ""
-        #     for column in tableColumns.split(","):
-        #         columnContents = column.split(":")
-        #         alias = columnContents[0]
-        #         dType = columnContents[1]
-        #         columnString += alias + " " + dType + ","
-        #     return columnString[:-1]
-        
+    
         # generate query string
         # cmd = """CREATE TABLE customers (name VARCHAR(255), address VARCHAR(255))"""
         cmd = """CREATE TABLE characters (id INTEGER, name VARCHAR(255), comics VARCHAR(1000), image VARCHAR(255), description VARCHAR(1000))"""
