@@ -207,6 +207,7 @@ class PrimaryController(FlaskView):
                             <tr>
                             <th>ID</th>
                             <th>Name</th>
+                            <th>Comics</th>
                             <th>Image</th>
                             <th>Description</th>
                             </tr>
@@ -222,10 +223,11 @@ class PrimaryController(FlaskView):
                 <tr>
                     <td>{}</td>
                     <td>{}</td>
+                    <td><p>{}</p></td>
                     <td><img src={}></img></td>
-                    <td>{}</td>
+                    <td><p>{}</p></td>
                 </tr>
-                """.format(record['id'], record['name'], record['img'], record['description'])
+                """.format(record['id'], record['name'], record['comics'], record['img'], record['description'])
                         
                         
             # append dynamic table footer contents

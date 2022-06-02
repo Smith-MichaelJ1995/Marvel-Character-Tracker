@@ -52,13 +52,15 @@ class DatabaseController:
                 # extract key/value fields
                 heroNumber = row[0]
                 heroName = row[1]
-                heroThumbnail = row[2]
-                heroDescription = row[3]
+                heroComics = row[2]
+                heroThumbnail = row[3]
+                heroDescription = row[4]
 
                 # append search results for future processing
                 searchResults.append({
                     "id": heroNumber,
                     "name": heroName,
+                    "comics": heroComics,
                     "img": heroThumbnail,
                     "description": heroDescription 
                 })
@@ -135,7 +137,7 @@ class DatabaseController:
         
         # generate query string
         # cmd = """CREATE TABLE customers (name VARCHAR(255), address VARCHAR(255))"""
-        cmd = """CREATE TABLE characters (id INTEGER, name VARCHAR(255), image VARCHAR(255), description VARCHAR(255))"""
+        cmd = """CREATE TABLE characters (id INTEGER, name VARCHAR(255), comics VARCHAR(1000), image VARCHAR(255), description VARCHAR(1000))"""
         
         # invoke SQL command
         self.myCursor.execute(cmd)
