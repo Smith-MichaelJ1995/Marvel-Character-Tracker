@@ -44,8 +44,8 @@ class PrimaryController(FlaskView):
                         <a class="navbar-brand" href="/">
                             <img src="https://cdn.iconscout.com/icon/free/png-256/marvel-282124.png" alt="Marvel" style="width:100px; height:60px; padding: 0px">
                         </a>
-                        <input class="form-control mr-sm-2" type="text" placeholder="Search">
-                        <button class="btn btn-success" type="submit">Search</button>
+                        <input class="form-control mr-sm-2" type="text" placeholder="Query Additional Characters Here">
+                        <button class="btn btn-success" type="submit">Generate</button>
                         </form>
                     </nav>
 
@@ -68,7 +68,7 @@ class PrimaryController(FlaskView):
         table_names = dbController.return_table_names()
 
         # instantiate webpage content
-        boilerplageContent = self.defaultHTMLWebpage
+        boilerplateContent = self.defaultHTMLWebpage
 
         # create placeholder for inserted HTML content
         dynamicContent = ""
@@ -77,7 +77,7 @@ class PrimaryController(FlaskView):
         if len(table_names) == 0:
             dynamicContent += "<h1 style='text-align: center;'>No Characters Found:</h1>"
         else:
-            dynamicContent += "<h1 style='text-align: center;'>Select Character(s) From List Below:</h1>"
+            dynamicContent += "<h1 style='text-align: center;'>Select Character(s) Below:</h1>"
             # dynamically create cards for each table
             for table in table_names:
                 dynamicContent +="""
@@ -92,40 +92,66 @@ class PrimaryController(FlaskView):
                 """.format(table.capitalize(), table, table.capitalize())
 
         # add footer content to webpage
-        boilerplageContent = boilerplageContent.replace("<INSERT-DYNAMIC-CONTENT-HERE>", dynamicContent)
+        boilerplateContent = boilerplateContent.replace("<INSERT-DYNAMIC-CONTENT-HERE>", dynamicContent)
 
-        return boilerplageContent
+        return boilerplateContent
 
-
-        # # determine which tables we have already
-        # dbTableNames = dbController.fetch_table_names()
-
-        # print("dbTableNames = {}".format(dbTableNames))
-
-        # # determine if marvelControllerData == None
-        # if mvController.characters == None:
-
-        #     # fetch target character from API
-        #     targetCharacter = mvController.fetch_target_character_from_api(characterName="Spectrum")
-            
-        #     # append target record into database
-        #     # data
-
-        #     mvController.characters = "Hello World"
-        #     return "<h1>From Database: {}</h1>".format(mvController.characters)
-        # else:
-        #     return "<h1>From Cache: {}</h1>".format(mvController.characters)
-
-        # THEN query database
-        # ELSE populate HTML table with marvel data
-        # return "<h1>This is my indexpage</h1>"
 
     # ROUTE #1: DISPLAY ALL DATA RECORDS FROM SPECIFIED TABLE
     @route('/view/<name>', methods=['GET'])
     def getTable(self, name):
-        #return "<h1>This is the view's page: {}</h1>".format(name)
-        print("Performing redirect!")
-        return redirect("http://localhost:5050/", code=302)
+
+        # given records list, return primary character
+        def getPrimaryRecord(name, records):
+            for record in records:
+                if name == record['name'].lower():
+                    return record
+            
+
+        # fetch records from database table
+        records = dbController.return_records_from_table(name)
+
+        # instantiate webpage content
+        boilerplateContent = self.defaultHTMLWebpage
+
+        # create placeholder for inserted HTML content
+        dynamicContent = ""
+
+        # determine quantity of records
+        if len(records) > 0:
+            
+            # extract primary character
+            primaryCharacterRecord = getPrimaryRecord(name, records)
+
+            # remove primary character from local records (all we have left is characters from other comics)
+            # records.remove(primaryCharacterRecord)
+
+            # display primary character information
+            boilerplateContent += """
+                <div class="jumbotron">
+                    <h1 style='text-align: center;'>Primary Character Name: <i>{}</i></h1>
+                    <h1 style='text-align: center;'>Primary Character ID: <i>{}</i></h1>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <h3>Thumbnail:</h3> <img src={}></img>
+                        </li>
+                        <li class="list-group-item">
+                            <h3>Description:<h3> <p>{}</p>
+                        </li>
+                    </ul>
+                </div>
+            """.format(primaryCharacterRecord["name"],primaryCharacterRecord["id"], primaryCharacterRecord["img"], primaryCharacterRecord["description"])
+
+        else:
+            boilerplateContent += "<h1 style='text-align: center;'>No Information Found...</h1>"
+
+
+        # add footer content to webpage
+        boilerplateContent = boilerplateContent.replace("<INSERT-DYNAMIC-CONTENT-HERE>", dynamicContent)
+
+        return boilerplateContent
+        #print("Performing redirect!")
+        #return redirect("http://localhost:5050/", code=302)
 
     # ROUTE #2: GIVEN NEW CHARACTER, PERFORM THE FOLLOWING APPLICATION LOGIC:
     # IF TABLE ALREADY EXISTS (CHECK AGAINST OUR RECORDS CONTROLLER), IF SO, RETURN ALERT MESSAGE AND DO NOTHING
