@@ -34,6 +34,8 @@ class MarvelController():
         )
         self.characters = None
 
+        print(self.credentials_stamp)
+
     # # return character profile based on name
     def fetch_content_from_api(self, queryURI):
         
@@ -42,6 +44,14 @@ class MarvelController():
 
             # build URL request method
             url = self.base_url + queryURI + self.credentials_stamp
+
+            # WORKS
+            #url = "https://gateway.marvel.com:443/v1/public/characters?name=Morbius&ts=1654164246&apikey=2a346d86972cc65d7982367dae7758af&hash=c74292bea3e7719c8c7f553435a88f67"
+
+            # DOESNT WORK
+            #url = "https://gateway.marvel.com:443/v1/public/characters?name='Morbius'&ts=1654164802&apikey=2a346d86972cc65d7982367dae7758af&hash=c1eb37eddc89b622161a8aa368d12057"
+
+            print("ATTEMPTING: {}".format(url))
 
             # generate response body
             res = requests.get(url).json()
@@ -62,7 +72,7 @@ class MarvelController():
     
     # given characterName, query information from API
     def fetch_target_character_from_api(self, characterName):
-        return self.fetch_content_from_api(queryURI="characters?name='{}'&".format(characterName))
+        return self.fetch_content_from_api(queryURI="characters?name={}&".format(characterName))
 
     # given characterName, query information from API
     def fetch_characters_from_target_comic(self, comicName):

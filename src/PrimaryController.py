@@ -142,58 +142,6 @@ class PrimaryController(FlaskView):
                 </div>
             """.format(primaryCharacterRecord["name"],primaryCharacterRecord["id"], primaryCharacterRecord["img"], primaryCharacterRecord["description"])
 
-
-#             <div class="container mt-3">
-#     <h2>Filterable Table</h2>
-#     <p>Type something in the input field to search the table for first names, last names or emails:</p>  
-#     <input class="form-control" id="myInput" type="text" placeholder="Search..">
-#     <br>
-#     <table class="table table-bordered">
-#       <thead>
-#         <tr>
-#           <th>Firstname</th>
-#           <th>Lastname</th>
-#           <th>Email</th>
-#         </tr>
-#       </thead>
-#       <tbody id="myTable">
-#         <tr>
-#           <td>John</td>
-#           <td>Doe</td>
-#           <td>john@example.com</td>
-#         </tr>
-#         <tr>
-#           <td>Mary</td>
-#           <td>Moe</td>
-#           <td>mary@mail.com</td>
-#         </tr>
-#         <tr>
-#           <td>July</td>
-#           <td>Dooley</td>
-#           <td>july@greatstuff.com</td>
-#         </tr>
-#         <tr>
-#           <td>Anja</td>
-#           <td>Ravendale</td>
-#           <td>a_r@test.com</td>
-#         </tr>
-#       </tbody>
-#     </table>
-    
-#     <p>Note that we start the search in tbody, to prevent filtering the table headers.</p>
-#   </div>
-
-#   <script>
-#   $(document).ready(function(){
-#     $("#myInput").on("keyup", function() {
-#       var value = $(this).val().toLowerCase();
-#       $("#myTable tr").filter(function() {
-#         $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-#       });
-#     });
-#   });
-#   </script>
-
             # begin to create template for filterable table
             dynamicContent += """
             <div class="container-fluid mt-3">
@@ -265,7 +213,10 @@ class PrimaryController(FlaskView):
     @route('/populateRecord', methods=['POST'])
     def createView(self):
 
-        character = mvController.fetch_target_character_from_api("spectrum")
+        #character = mvController.fetch_target_character_from_api("Morbius")
+
+        # print(character)
+        # return "<h1>All DONE</h1>"
 
         # extract desired character/table from input form
         characterName = "" if request.form['characterName'] == "" else request.form['characterName'].lower()
@@ -281,8 +232,8 @@ class PrimaryController(FlaskView):
             # QUERY MARVEL API, FETCH SPECIFIED CHARACTER RECORD, THEN 
             characterRecord = mvController.fetch_target_character_from_api(characterName=characterName)
 
-            print("characterRecord: {}".format(characterRecord))
-            exit()
+            #print("characterRecord: {}".format(characterRecord))
+            #exit()
 
             # THIS CHECK ENSURES GRACEFUL HANDLING OF NO RESULTS OR FINDING UNINTENDED CHARACTERS THRU API
             if characterRecord['data']['results'] == [] or characterRecord["data"]["results"][0]['name'].lower() != characterName:
