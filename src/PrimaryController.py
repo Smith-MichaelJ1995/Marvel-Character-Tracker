@@ -145,7 +145,7 @@ class PrimaryController(FlaskView):
             # begin to create template for filterable table
             dynamicContent += """
             <div class="container-fluid mt-3">
-                <h2>Filterable Table</h2>
+                <h2>Characters From Other Comics</h2>
                     <p>Type something in the input field to search the character for name, id, comics, description:</p>
                     <input class="form-control" id="myInput" type="text" placeholder="Search..">
                     <br>
@@ -155,7 +155,6 @@ class PrimaryController(FlaskView):
                             <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Comics</th>
                             <th>Image</th>
                             <th>Description</th>
                             </tr>
@@ -171,11 +170,10 @@ class PrimaryController(FlaskView):
                 <tr>
                     <td>{}</td>
                     <td>{}</td>
-                    <td><p>{}</p></td>
                     <td><img src={}></img></td>
                     <td><p>{}</p></td>
                 </tr>
-                """.format(record['id'], record['name'], record['comics'], record['img'], record['description'])
+                """.format(record['id'], record['name'], record['img'], record['description'])
                         
                         
             # append dynamic table footer contents
@@ -220,6 +218,11 @@ class PrimaryController(FlaskView):
 
         # extract desired character/table from input form
         characterName = "" if request.form['characterName'] == "" else request.form['characterName'].lower()
+
+        # remove whitespaces in character names
+        characterName = characterName.replace(" ", "_")
+
+        # create placeholder for characters from other comics
         characterComics = []
 
         # extract table names from data cache

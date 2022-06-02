@@ -93,7 +93,6 @@ class MarvelController():
                 {
                     "id":rawCharacterRecord['id'],
                     "name": self.dbController.remove_bad_characters(rawCharacterRecord['name']),
-                    "comics": self.fetch_comics_from_character_record(rawCharacterRecord['comics']['items']),
                     "img": rawCharacterRecord['thumbnail']['path'] + "." + rawCharacterRecord['thumbnail']['extension'],
                     "description": self.dbController.remove_bad_characters(
                         inpt=rawCharacterRecord['description']
@@ -140,7 +139,6 @@ class MarvelController():
             charactersCleansed.append({
                 "id":character['id'],
                 "name": self.dbController.remove_bad_characters(character['name']),
-                "comics": self.fetch_comics_from_character_record(character['comics']['items']),
                 "img": character['thumbnail']['path'] + "." + character['thumbnail']['extension'],
                 "description": self.dbController.remove_bad_characters(
                     inpt=character['description']
@@ -151,14 +149,14 @@ class MarvelController():
 
 
     # given comics list, return back all strings, make sure they're void of bad characters
-    def fetch_comics_from_character_record(self, comics):
-        comicNames = ""
-        for comic in comics:
-            comicName = self.dbController.remove_bad_characters(
-                inpt=comic['name']
-            )
-            comicNames += "{}, ".format(comicName)
-        return comicNames
+    # def fetch_comics_from_character_record(self, comics):
+    #     comicNames = ""
+    #     for comic in comics:
+    #         comicName = self.dbController.remove_bad_characters(
+    #             inpt=comic['name']
+    #         )
+    #         comicNames += "{}, ".format(comicName)
+    #     return comicNames
     
 # # given provided comic information, return/fetch all characters within comic
 # def fetch_all_characters_from_comic(comicId, config):
