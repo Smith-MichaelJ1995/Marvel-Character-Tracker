@@ -115,17 +115,8 @@ class MarvelController():
                     finalCharactersResultsList=finalCharactersResultsList
                 )
 
-                break
-
             # provide neatened characters list to caller
             return finalCharactersResultsList
-                # save character object for later processing
-                # finalCharactersResultsList.extend(
-                #     charactersFromTargetComic
-                # )
-
-            # remove duplicate characters found from different comics
-            #finalCharactersResultsList = [dict(t) for t in {tuple(d.items()) for d in finalCharactersResultsList}]
 
 
     # given characterName, query information from API

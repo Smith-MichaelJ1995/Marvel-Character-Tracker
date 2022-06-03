@@ -26,6 +26,37 @@ class DatabaseController:
                 print(err)
             exit()
 
+    # generate generic/re-usable function for extracting records from a table
+    def extract_records_from_database_table(self, tableName):
+
+        # define search results placeholder
+        searchResults = []
+
+        # extract all records from table in question
+        self.myCursor.execute("SELECT * from {}".format(tableName))
+        rows = self.myCursor.fetchall()
+
+        # fetch all records from all rows
+        for index, row in enumerate(rows):
+
+            # extract key/value fields
+            heroNumber = row[0]
+            heroName = row[1]
+            heroComics = row[2]
+            heroThumbnail = row[3]
+            heroDescription = row[4]
+
+            # append search results for future processing
+            searchResults.append({
+                "id": heroNumber,
+                "name": heroName,
+                "comics": heroComics,
+                "img": heroThumbnail,
+                "description": heroDescription 
+            })
+
+        return searchResults
+
     # perform operation on class instantiation
     def populate(self):
 
@@ -41,34 +72,9 @@ class DatabaseController:
 
             # extract column name
             tableName = table[0]
-            searchResults = []
-
-            # extract all records from table in question
-            self.myCursor.execute("SELECT * from {}".format(tableName))
-            rows = self.myCursor.fetchall()
-
-            # fetch all records from all rows
-            for index, row in enumerate(rows):
-
-                # extract key/value fields
-                heroNumber = row[0]
-                heroName = row[1]
-                heroComics = row[2]
-                heroThumbnail = row[3]
-                heroDescription = row[4]
-
-                # append search results for future processing
-                searchResults.append({
-                    "id": heroNumber,
-                    "name": heroName,
-                    "comics": heroComics,
-                    "img": heroThumbnail,
-                    "description": heroDescription 
-                })
-            
             
             # append item to records container
-            records[tableName] = searchResults
+            records[tableName] = self.extract_records_from_database_table(tableName)
             
         return records
 
@@ -83,11 +89,14 @@ class DatabaseController:
         return self.records.keys()
 
     # return table records to viewer
-    def return_records_from_table(self, tableName):
+    def return_records_from_cache(self, tableName):
         if tableName in self.records.keys():
             return self.records[tableName]
         else:
-            return []
+
+            # extract record from database
+            self.records[tableName] = self.extract_records_from_database_table(tableName)
+            return self.records[tableName]
         
 
     # instantiate expected variables

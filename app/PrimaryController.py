@@ -109,7 +109,7 @@ class PrimaryController(FlaskView):
             
 
         # fetch records from database table
-        records = dbController.return_records_from_table(name)
+        records = dbController.return_records_from_cache(name)
 
         # instantiate webpage content
         boilerplateContent = self.defaultHTMLWebpage
