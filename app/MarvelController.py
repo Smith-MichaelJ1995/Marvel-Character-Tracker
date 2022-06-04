@@ -9,33 +9,16 @@ from DatabaseController import DatabaseController
 
 class MarvelController():
 
-    # generate API auth credentials
-    def fetch_config(self):
-
-        # GENERATE TIMESTAMP
-        #ts = int(round(datetime.now().timestamp()))
-
-        # GENERATE PRE-HASH-STRING
-        preHashContents = self.TIMESTAMP + self.SECRET + self.KEY 
-
-        # perform URL encoding
-        hsh = hashlib.md5(preHashContents.encode('utf-8')).hexdigest()
-
-        # provide query config contents to caller
-        return { "timestamp": self.TIMESTAMP, "key": self.KEY, "hash": hsh }
-
-
     # instantiate API key-secret variables
     def __init__(self, databaseController):
-        self.KEY = os.environ.get('MARVEL_API_KEY')
-        self.SECRET = os.environ.get("MARVEL_API_SECRET")
+        self.KEY = os.environ.get("MARVEL_API_KEY")
+        self.HASH = os.environ.get("MARVEL_API_HASH")
         self.TIMESTAMP = os.environ.get("MARVEL_API_TIMESTAMP")
-        self.config = self.fetch_config()
         self.base_url = "https://gateway.marvel.com:443/v1/public/"
         self.credentials_stamp = "ts={}&apikey={}&hash={}".format(
-            self.config['timestamp'],
-            self.config['key'], 
-            self.config['hash']
+            self.TIMESTAMP,
+            self.KEY, 
+            self.HASH
         )
         self.characters = None
         self.dbController = databaseController
