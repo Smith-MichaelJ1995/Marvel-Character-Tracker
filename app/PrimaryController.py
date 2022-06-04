@@ -97,6 +97,14 @@ class PrimaryController(FlaskView):
         return boilerplateContent
 
 
+    # ROUTE #1: DISPLAY ALL DATA RECORDS FROM SPECIFIED TABLE (UNIT TEST SUPPORT)
+    @route('/view/<name>/data', methods=['GET'])
+    def getTableData(self, name):
+
+        # fetch records from cache
+        return jsonify(dbController.return_records_from_cache(name))
+
+
     # ROUTE #1: DISPLAY ALL DATA RECORDS FROM SPECIFIED TABLE
     @route('/view/<name>', methods=['GET'])
     def getTable(self, name):
@@ -122,9 +130,6 @@ class PrimaryController(FlaskView):
             
             # extract primary character
             primaryCharacterRecord = getPrimaryRecord(name, records)
-
-            # remove primary character from local records (all we have left is characters from other comics)
-            # records.remove(primaryCharacterRecord)
 
             # display primary character information
             dynamicContent += """
@@ -258,6 +263,3 @@ PrimaryController.register(app, route_base='/')
 # trigger invocation of API
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050, debug=True)
-
-    
-

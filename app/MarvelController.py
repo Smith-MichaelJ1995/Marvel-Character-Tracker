@@ -43,7 +43,6 @@ class MarvelController():
             # generate response body
             res = requests.get(url, verify=False).json()
 
-            #https://gateway.marvel.com:443/v1/public/characters?name=ace&ts=1654136081&apikey=2a346d86972cc65d7982367dae7758af&hash=0a6c68ce57dcb731dbb49be859124363
 
             # perform HTTP web request
             return res

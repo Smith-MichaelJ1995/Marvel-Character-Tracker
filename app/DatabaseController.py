@@ -32,28 +32,38 @@ class DatabaseController:
         # define search results placeholder
         searchResults = []
 
-        # extract all records from table in question
-        self.myCursor.execute("SELECT * from {}".format(tableName))
-        rows = self.myCursor.fetchall()
+        # determine if table exists
+        self.myCursor.execute("SELECT * FROM INFORMATION_SCHEMA.TABLES  WHERE TABLE_SCHEMA = '{}' AND TABLE_NAME = '{}';".format(
+            os.environ['SQL_DATABASE'],
+            tableName
+        ))
+        tables = self.myCursor.fetchall()
 
-        # fetch all records from all rows
-        for index, row in enumerate(rows):
+        # only continue processing if we've found results for this table
+        if len(tables) > 0:
 
-            # extract key/value fields
-            heroNumber = row[0]
-            heroName = row[1]
-            heroComics = row[2]
-            heroThumbnail = row[3]
-            heroDescription = row[4]
+            # extract all records from table in question
+            self.myCursor.execute("SELECT * from {}".format(tableName))
+            rows = self.myCursor.fetchall()
 
-            # append search results for future processing
-            searchResults.append({
-                "id": heroNumber,
-                "name": heroName,
-                "comics": heroComics,
-                "img": heroThumbnail,
-                "description": heroDescription 
-            })
+            # fetch all records from all rows
+            for index, row in enumerate(rows):
+
+                # extract key/value fields
+                heroNumber = row[0]
+                heroName = row[1]
+                heroComics = row[2]
+                heroThumbnail = row[3]
+                heroDescription = row[4]
+
+                # append search results for future processing
+                searchResults.append({
+                    "id": heroNumber,
+                    "name": heroName,
+                    "comics": heroComics,
+                    "img": heroThumbnail,
+                    "description": heroDescription 
+                })
 
         return searchResults
 
@@ -95,8 +105,14 @@ class DatabaseController:
         else:
 
             # extract record from database
-            self.records[tableName] = self.extract_records_from_database_table(tableName)
-            return self.records[tableName]
+            databaseRecords = self.extract_records_from_database_table(tableName)
+
+            # only update cache if we've found the specified table data
+            if len(databaseRecords) > 0:
+                self.records[tableName] = databaseRecords
+            
+            # return database records to caller
+            return databaseRecords
         
 
     # instantiate expected variables
@@ -112,31 +128,13 @@ class DatabaseController:
         self.badChars = ['&','<','>','/','\\','"',"'",'?','+']
 
         # use selected database
-        self.myCursor.execute("USE intel;")
+        self.myCursor.execute("USE {};".format(os.environ['SQL_DATABASE']))
 
         # populate records from database
         self.records = self.populate()
 
     # insert records into databases specified table
     def insert_records(self, tableName, tableRecords):  
-
-        # given list of dictionary records, generate list of tuples ready to insert
-        # def generate_tuple_of_data(): 
-        #     tableRecordsSet = []
-        #     for record in tableRecords.values():
-        #         # print(json.dumps(record, indent=4))
-        #         # exit()
-        #         tableRecordsSet.append(set(record['id'], record['name'], record['comics'], record['img'], record['description']))
-        #     return tableRecordsSet
-
-        # insert into self.records
-        # self.records[tableName] = tableRecords.value
-
-        # print("tableRecords = {}".format(self.records[tableName]))
-        # print("\n\n\n")
-        # print(tableRecords)
-        # exit()
-
         
         # create table
         cmd = """CREATE TABLE {} (id INTEGER, name VARCHAR(255), comics VARCHAR(1000), image VARCHAR(255), description VARCHAR(1000));""".format(tableName)
