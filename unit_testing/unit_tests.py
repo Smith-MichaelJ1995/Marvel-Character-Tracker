@@ -54,18 +54,3 @@ for number, testCase in enumerate(cases):
             passed += 1
 
     print("PASSED CASES: {}/{}".format(passed,len(characterActualConfig)))
-    
-            
-
-
-
-
-    # requests.get(url, verify=False).json()
-
-    # fetch character information from API
-
-
-    # compare equality of records
-
-
-    #
