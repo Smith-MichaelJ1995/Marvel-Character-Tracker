@@ -2,6 +2,9 @@
 Project capable of querying Marvel API for Character/Comic records and seeding results into local database for further processing. Integrated latest UI technologies to enhance experience and data readability.
 
 ## Design/Reference Architecture
+2-tier Flask/MySQL application, each hosted as separate containers, orchestrated via docker-compose.
+![Unit Test Results](artifacts/Marvel-Project-Reference-Architecture.drawio.png?raw=true "Reference Architecture")
+
 
 ## Pre-Req's
 ### Marvel API
@@ -12,11 +15,13 @@ Project capable of querying Marvel API for Character/Comic records and seeding r
 2. MANDATORY: Python 3+ (Generating API Hash & Unit-Testing)
 3. OPTIONAL: ".sh" Script Interpreter (I.E: git bash)
 
+
 ## Getting Started
 1. Clone Repo: `git clone https://github.com/Smith-MichaelJ1995/Marvel-Impossible-Travel-Challenge`
 2. Key Generation & Test-Case Support: `pip install yaml`, `pip install hashlib`, `pip install requests`.
 3. Generate Marvel API Credentials: `python generate_credentials.py <your-key> <your-secret>`
 4. Build + Run Containers: `sh build.sh`
+    - *NOTE: The Containers are defaulted to run on ports 5050 (app), 32000 (db). If you have services running on these ports locally, either turn them off OR change port #'s in docker-compose.yml*
 5. Instantiate Web-Application (New Terminal, Same Directory): `sh run.sh`
 
 ## Unit Testing
