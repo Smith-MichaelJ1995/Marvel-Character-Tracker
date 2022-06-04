@@ -7,10 +7,10 @@ import hashlib
 def fetch_config(key, secret):
 
     # GENERATE TIMESTAMP
-    ts = str(int(round(datetime.datetime.now().timestamp())))
+    ts = int(round(datetime.datetime.now().timestamp()))
 
     # GENERATE PRE-HASH-STRING
-    preHashContents = ts + secret + key 
+    preHashContents = str(ts) + secret + key 
 
     # perform URL encoding
     hsh = hashlib.md5(preHashContents.encode('utf-8')).hexdigest()
@@ -48,7 +48,7 @@ key = sys.argv[1]
 secret = sys.argv[2]
 
 # fetch config: timestamp, key, secret
-config = fetch_config(key, secret)
+config = fetch_config(key=key, secret=secret)
 
 # update docker_compose.yml file with updated config
 write_docker_compose(config)
