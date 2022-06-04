@@ -4,9 +4,6 @@ import hashlib
 import requests
 import json
 
-# integrate Database class controller
-from DatabaseController import DatabaseController
-
 class MarvelController():
 
     # instantiate API key-secret variables
@@ -21,7 +18,6 @@ class MarvelController():
             self.HASH
         )
         self.characters = None
-        self.dbController = databaseController
 
     # # return character profile based on name
     def fetch_content_from_api(self, queryURI):
