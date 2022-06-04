@@ -1,40 +1,37 @@
-version: "3"
-services:
-  db:
-    image: mysql:5.7
-    platform: linux/x86_64
-    container_name: "db"
-    hostname: db
-    ports:
-      - "32000:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: <contact-mike>
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d/:ro
-    networks:
-      - app-tier
-  app:
-    build: ./app
-    container_name: "flask"
-    links:
-      - db
-    ports:
-      - "5050:5050"
-    networks:
-      - app-tier
-    environment:
-      SQL_HOST: 'db'
-      SQL_USER: 'root'
-      SQL_PASSWORD: '<contact-mike>'
-      SQL_DATABASE: 'intel'
-      SQL_PORT: '3306'
-      MARVEL_API_KEY: '<contact-mike>'
-      MARVEL_API_SECRET: '<contact-mike>'
-      MARVEL_API_TIMESTAMP: '<contact-mike>'
-    command:
-      tail -F /dev/null
-
-
 networks:
   app-tier:
     driver: bridge
+services:
+  app:
+    build: ./app
+    command: tail -F /dev/null
+    container_name: flask
+    environment:
+      MARVEL_API_HASH: 6a1ffed8298067ed61148c2c7db12935
+      MARVEL_API_KEY: 2a346d86972cc65d7982367dae7758af
+      MARVEL_API_TIMESTAMP: 1654341445
+      SQL_DATABASE: intel
+      SQL_HOST: db
+      SQL_PASSWORD: root
+      SQL_PORT: '3306'
+      SQL_USER: root
+    links:
+    - db
+    networks:
+    - app-tier
+    ports:
+    - 5050:5050
+  db:
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    hostname: db
+    image: mysql:5.7
+    networks:
+    - app-tier
+    platform: linux/x86_64
+    ports:
+    - 32000:3306
+    volumes:
+    - ./db:/docker-entrypoint-initdb.d/:ro
+version: '3'
