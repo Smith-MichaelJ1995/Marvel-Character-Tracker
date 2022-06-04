@@ -3,7 +3,7 @@ Project capable of querying Marvel API for Character/Comic records and seeding r
 
 ## Design/Reference Architecture
 2-tier Flask/MySQL application, each hosted as separate containers, orchestrated via docker-compose.
-![Unit Test Results](artifacts/Marvel-Project-Reference-Architecture.drawio.png?raw=true "Reference Architecture")
+![Reference Architecture Diagram](artifacts/arch.png?raw=true "Reference Architecture")
 
 
 ## Pre-Req's
