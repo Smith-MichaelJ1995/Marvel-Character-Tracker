@@ -18,11 +18,12 @@ Project capable of querying Marvel API for Character/Comic records and seeding r
 
 ## Getting Started
 1. Clone Repo: `git clone https://github.com/Smith-MichaelJ1995/Marvel-Impossible-Travel-Challenge`
-2. Key Generation & Test-Case Support: `pip install yaml`, `pip install hashlib`, `pip install requests`.
+2. Key Generation & Test-Case Support: `pip install pyyaml`, `pip install requests`.
 3. Generate Marvel API Credentials: `python generate_credentials.py <your-key> <your-secret>`
 4. Build + Run Containers: `sh build.sh`
     - *NOTE: The Containers are defaulted to run on ports 5050 (app), 32000 (db). If you have services running on these ports locally, either turn them off OR change port #'s in docker-compose.yml*
 5. Instantiate Web-Application (New Terminal, Same Directory): `sh run.sh`
+6. Open Browser to localhost:5050 ![Homepage](artifacts/homepage.png?raw=true "Homepage")
 
 ## Unit Testing
 I've created a series of unit-tests to validate records between the database cache & expected record set. Please complete the following steps to confirm validity
