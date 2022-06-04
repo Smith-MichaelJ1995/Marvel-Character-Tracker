@@ -35,7 +35,6 @@ for number, testCase in enumerate(cases):
     print("Character Name: {}".format(characterName))
     print("Expected Characters Total: {}".format(len(characterExpectedConfig)))
     print("Actual Characters Total: {}".format(len(characterActualConfig)))
-    print("")
 
     # traverse through all records
     for index, (actual, expected) in enumerate(zip(characterActualConfig, characterExpectedConfig)):
@@ -45,14 +44,15 @@ for number, testCase in enumerate(cases):
 
         # check for equality between dictionary records
         if not matching:
+            print("")
             print("CASE INDEX: {}, DISCREPANCY FOUND".format(index))
+            print("")
             #print("Actual: {}".format(json.dumps(actual, indent=4)))
             #print("Expected: {}".format(json.dumps(expected, indent=4)))
         else:
             #print("CASE INDEX: {}, NO ISSUES".format(index))
             passed += 1
 
-    print("")
     print("PASSED CASES: {}/{}".format(passed,len(characterActualConfig)))
     
             
