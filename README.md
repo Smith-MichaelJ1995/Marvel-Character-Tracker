@@ -23,7 +23,7 @@ Project capable of querying Marvel API for Character/Comic records and seeding r
 I've created a series of unit-tests to validate records between the database cache & expected record set. Please complete the following steps to confirm validity
 1. Enter Tests Directory: `cd unit_testing`
 2. Invoke Tests: `python unit_tests.py`
-3. Confirm Console Output: ![Unit Test Results](artifacts/unit_tests.png?raw=true "Unit Test Results")
+3. Confirm Console Output: ![Unit Test Results](artifacts/unit-tests.png?raw=true "Unit Test Results")
 
 ## Authors
  - Michael J. Smith
