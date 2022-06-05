@@ -12,6 +12,8 @@ Project capable of querying Marvel API for Character/Comic records and seeding r
 ### System/Software Installation 
 0. MANDATORY: Git
 1. MANDATORY: Docker + Docker Compose
+    - Docker (tested) 20.10.16
+    - Docker Compose (tested) v2.6.0
 2. MANDATORY: Python 3+ (Generating API Hash & Unit-Testing)
 3. OPTIONAL: ".sh" Script Interpreter (I.E: git bash)
 
