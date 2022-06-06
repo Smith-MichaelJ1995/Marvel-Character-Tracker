@@ -26,6 +26,7 @@ Project capable of querying Marvel API for Character/Comic records and seeding r
 3. Generate Marvel API Credentials: `python generate_credentials.py <your-key> <your-secret>`
     - This script will compute your key, timestamp, and hash and environment variables and update the docker-compose.yml file.
 4. Build + Run Containers: `sh build.sh`
+    - *NOTE: Docker Daemon must be running on VM
     - *NOTE: The Containers are defaulted to run on ports 5050 (app), 32000 (db). If you have services running on these ports locally, either turn them off OR change port #'s in docker-compose.yml*
 5. Instantiate Web-Application (New Terminal, Same Directory): `sh run.sh`
 6. Open Browser to localhost:5050 ![Homepage](artifacts/homepage.png?raw=true "Homepage")
