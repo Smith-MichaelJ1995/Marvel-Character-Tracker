@@ -19,7 +19,9 @@ Project capable of querying Marvel API for Character/Comic records and seeding r
 
 
 ## Getting Started
-1. Clone Repo: `git clone https://github.com/Smith-MichaelJ1995/Marvel-Impossible-Travel-Challenge`
+1. Clone Repo: 
+    - HTTPS: `git clone https://github.com/Smith-MichaelJ1995/Marvel-Impossible-Travel-Challenge` (Requires GitHub Personal Access Token https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) 
+    - SSH: `git clone git@github.com:Smith-MichaelJ1995/Marvel-Impossible-Travel-Challenge.git` (Requires SSH Key on VM) https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
 2. Key Generation & Test-Case Support: `pip install pyyaml`, `pip install requests`.
 3. Generate Marvel API Credentials: `python generate_credentials.py <your-key> <your-secret>`
     - This script will compute your key, timestamp, and hash and environment variables and update the docker-compose.yml file.
